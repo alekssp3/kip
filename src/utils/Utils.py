@@ -6,6 +6,9 @@ import string
 import zipfile
 import datetime
 from collections import namedtuple
+import tkinter as tk
+
+from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
 
 from Scanner import Scanner
 
