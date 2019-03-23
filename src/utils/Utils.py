@@ -58,7 +58,7 @@ def zip_info(archive_name, verbose=False):
             print(f'\tZIP version:\t{info.create_version}')
             print(f'\tCompressed:\t{info.compress_size} bytes')
             print(f'\tUncompressed:\t{info.file_size} bytes')
-        print
+        print()
 
 
 def get_data(path, db=None):
@@ -71,8 +71,15 @@ def get_data(path, db=None):
 
 
 def create_dir(dir_name):
-    if dir_name not in os.listdir('.'):
-        os.mkdir(dir_name)
+    bn = os.path.basename(dir_name)
+    pd = os.path.dirname(dir_name) or '.'
+    if bn not in os.listdir(os.path.abspath(pd)):
+        try:
+            os.mkdir(dir_name)
+        except Exception:
+            # FIXED: Understand with file path!!!
+            # I hope this will work
+            print('Some shit will be')
         print(f'{dir_name} folder is created')
 
 
@@ -116,9 +123,6 @@ def get_file_type(path):
         return ''
     else:
         return path.split('.')[-1]
-
-
-
 
 
 def combine_data(data: list, where: dict):
@@ -225,10 +229,10 @@ class QUESTION:
 def check_and_merge(out_file, rfi_list=None, rfi_db=None, answers_db=None, open_on_done=True):
     if rfi_list is None:
         rfi_list = tk_gui("Add rfi's")
-        if '.pdf' in out_file:
-            save(rfi_list, out_file.replace('.pdf', '.txt'))
-        else:
-            save(rfi_list, out_file + '.txt')
+    if '.pdf' in out_file:
+        save(rfi_list, out_file.replace('.pdf', '.txt'))
+    else:
+        save(rfi_list, out_file + '.txt')
 
     paths = check_rfi(rfi_list, rfi_db, answers_db)
     pdf_merge(paths.rfi.values(), out_file)
@@ -290,8 +294,11 @@ def tk_gui(title=''):
     return app.out
 
 
-def check_and_combine(rfi_list, folder=None, rfi_db=None, answers_db=None, excludes=None, exactly=None):
+def check_and_combine(rfi_list=None, folder=None, rfi_db=None, answers_db=None, excludes=None, exactly=None):
     # folder_name = folder_name or ''.join(rfi_list.split('.')[:-1])
+    if rfi_list is None:
+        rfi_list = tk_gui("Add rfi's")
+
     rfi_db = rfi_db or load('rfi_db.db')
     answers_db = answers_db or load('answers_db.db')
     # excludes = excludes or load(rfi_list+'.excludes')
