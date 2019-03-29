@@ -10,7 +10,8 @@ import tkinter as tk
 
 from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
 
-from Scanner import Scanner
+from .. import Scanner
+from .Config import Config
 
 
 def sum_from_text(text, separator=' '):
@@ -299,13 +300,17 @@ def check_and_combine(rfi_list=None, folder=None, rfi_db=None, answers_db=None, 
     if rfi_list is None:
         rfi_list = tk_gui("Add rfi's")
 
-    rfi_db = rfi_db or load('rfi_db.db')
-    answers_db = answers_db or load('answers_db.db')
+    if folder is None:
+        folder = tk_gui("Add folder name")
+
+    rfi_db = rfi_db or Scanner.load_db(Config.RFI_DB_PATH)
+    answers_db = answers_db or Scanner.load_db(Config.ANSWER_DB_PATH)
     # excludes = excludes or load(rfi_list+'.excludes')
     # exactly = exactly or load(rfi_list+'.exactly')
     data = check_rfi(rfi_list, rfi_db, answers_db)
     combine_folder(data.rfi.values(), folder)
     return data
+
 
 
 # def check_and_combine_2(data_list, folder, database):

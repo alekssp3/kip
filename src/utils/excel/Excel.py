@@ -1,8 +1,9 @@
 import re
+import openpyxl
 
-from utils.Splitter import Splitter
-from utils.Utils import load, save
-from utils.dxf.DXF import WrongFileFormat
+from ..Splitter import Splitter
+from ..Utils import load, save
+from ..dxf.DXF import WrongFileFormat
 
 
 def convert_to_excel(filename):
@@ -53,3 +54,13 @@ def convert_to_excel(filename):
 #         save(out, filename)
 #     else:
 #         print('Buffer is empty')
+
+
+def timesheetsum(filename):
+    wb = openpyxl.load_workbook(filename)
+    ws = wb.sheetnames
+    out = []
+    for sh in ws[1:]:
+        s = sum([sh['b'+ str(j)].value for j in range(4, 10) if sh['b'+ str(j)].value is not None])
+        out.append(f'{sh}\t{s}')
+    return out

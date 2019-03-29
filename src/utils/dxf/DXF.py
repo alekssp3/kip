@@ -1,7 +1,7 @@
 import os
 
-from utils.Utils import load
-from utils.dxf.DXFQuery import DXF_QURYES
+from ..Utils import load
+from .DXFQuery import DXF_QURYES
 
 
 def get_data_from_dxf(filename, dxf_query):

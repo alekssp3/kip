@@ -1,6 +1,6 @@
 import re
 
-from utils.patterns import singleton
+from .patterns.singleton import singleton
 
 
 @singleton
