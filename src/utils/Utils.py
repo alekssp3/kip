@@ -9,38 +9,17 @@ from collections import namedtuple
 import tkinter as tk
 
 from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
-
-from .. import Scanner
 from .Config import Config
 
-
 def sum_from_text(text, separator=' '):
+    l = text.split(separator)
     if '.' in text or ',' in text:
-        return sum([float(i) for i in text.split(separator)])
-    return sum([int(i) for i in text.split(separator)])
+        return sum([float(i) for i in l if i != ''])
+    return sum([int(i) for i in l if i != ''])
 
 
 def __get_var_name(var):
     return [k for k, v in globals().items() if v == var][0]
-
-
-def save(what, filename=''):
-    if filename == '':
-        filename = input('Input file name: ')
-    with open(filename, 'w', encoding='utf-8') as f:
-        for i in what:
-            f.write(str(i) + '\n')
-
-
-def load(filename='', mode='text'):
-    if filename == "":
-        filename = input('Input file name: ')
-    with open(filename, 'r', encoding='utf-8') as f:
-        if mode == 'raw':
-            data = f.read()
-        else:
-            data = [line.strip() for line in f.readlines()]
-    return data
 
 
 def unzip(filename, folder='.'):
@@ -148,7 +127,8 @@ def check_rfi(rfi_list, rfi_db=None, answers_db=None):
 
 
 # v 0.1
-def find_in_db(data: list = None, db: Scanner = None):
+# {data : (type=list),  db : (type=Scanner)}
+def find_in_db(data=None, db=None):
     if data is None:
         data = tk_gui('Add data for finding')
     if db is None:
@@ -392,93 +372,7 @@ def reproduce(template, extended, length=3, fill='0'):
         print(template.format(i).upper())
 
 
-class PROJECT_STRUCTURES:
-    # name path rev
-    NPR = ('NRP', 'name path rev')
-    NORM = ('NORM', 'zone desc draw rfi date quant')
-    RFI = ('RFI', 'rfi ans')
-    RFI_STRUCT = ('RFI_STRUCT', 'data path')
-    ANS_STRUCT = ('ANS_STRUCT', 'data path')
 
-
-def create_new_structure(name, fields):
-    return namedtuple(name, fields)
-
-
-def sum_by_struct_field(struct, field):
-    return sum([string_to_num(i.__getattribute__(field)) for i in struct])
-
-
-def get_structure_from_dict(d: dict, structure):
-    out = []
-    for struct in zip(d.keys(), d.values()):
-        out.append(structure._make(struct))
-    return out
-
-
-def get_projects_structure(projects_list, projects_paths):
-    DataStructure = namedtuple(*PROJECT_STRUCTURES.NPR)
-    ProjectsStructure = []
-    for project in projects_list:
-        for path in projects_paths:
-            if project.lower() in path.lower():
-                ProjectsStructure.append(
-                    DataStructure._make((project, path, get_project_rev(project.lower(), path.lower()))))
-    return ProjectsStructure
-
-
-def get_last_projects_structure(projects_list, projects_structure):
-    buffer = []
-    for project in projects_list:
-        for data_structure in projects_structure:
-            if project == data_structure.name and get_last_proj_rev(project, projects_structure) == data_structure.rev:
-                if data_structure not in buffer:
-                    buffer.append(data_structure)
-    return buffer
-
-
-def struct_to_string_buffer(struct, splitter='\t'):
-    buffer = []
-    for line in struct:
-        buffer.append(splitter.join(line))
-    return buffer
-
-
-def string_to_num(string):
-    num = string.replace(',', '.').strip()
-    try:
-        num = float(num)
-    except Exception:
-        print('Not correct numeric string')
-    if int(num) == num:
-        num = int(num)
-    return num
-
-
-def restruct_rfi_by_draw(rfi_struct, new_struct):
-    buffer = []
-    for line in rfi_struct:
-        spl = line.draw.split(';')
-        current_quant = string_to_num(line.quant)
-        cur_module = current_quant % len(spl)
-        if cur_module != 0:
-            quant = [float((current_quant - cur_module) / len(spl)) for _ in range(len(spl))]
-            quant[-1] = current_quant - sum(quant[:-1])
-        else:
-            quant = [float(current_quant / len(spl)) for _ in range(len(spl))]
-        for i in range(len(spl)):
-            draw = spl[i].split('_')
-            if isinstance(quant, (int, float)):
-                if int(quant) == quant:
-                    quant = int(quant)
-                l = new_struct._make((line.zone, line.desc, draw[0], line.rfi, line.date, str(quant).replace('.', ',')))
-            else:
-                if int(quant[i]) == quant[i]:
-                    quant[i] = int(quant[i])
-                l = new_struct._make(
-                    (line.zone, line.desc, draw[0], line.rfi, line.date, str(quant[i]).replace('.', ',')))
-            buffer.append(l)
-    return buffer
 
 
 def lists_compare(list1, list2):

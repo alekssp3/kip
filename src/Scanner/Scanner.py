@@ -2,7 +2,8 @@ import os
 import re
 from datetime import time
 
-from ..utils.Utils import unzip, save, load
+from ..utils.Utils import unzip
+from ..utils.data import save, load
 
 
 def load_db(db_name, temp_folder='.', remove_after=True):

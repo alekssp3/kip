@@ -13,3 +13,8 @@ class QR():
             qr.print_ascii()
         else:
             qr.print_tty()
+
+
+def gen_qr(data):
+    qr = QR(data)
+    qr.get_qr()
