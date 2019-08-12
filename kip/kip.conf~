@@ -1,0 +1,11 @@
+DEFAULT_PATH = C:/Users
+RFI_FIND_PATH = P:/RFI/Salamat_Suerkul, C:/Users/Al/Downloads
+RFI_DB_PATH = P:/rfi.dbz
+ANSWER_FIND_PATH = P:/RFI/02 RHI-ZSN.0560-RFI_ответы
+ANSWER_DB_PATH = P:/ANSWERS.dbraw
+PROJECT_FIND_PATH = P:/00-General_plan, P:/01-E&I_PROJECTS
+PROJECT_DB_PATH = P:/PROJECTS.dbraw
+# SOME_TEST_PARAM = None
+# PARAM_AFTER_RUN = 234
+a = 3
+b = 4

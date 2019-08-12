@@ -1,5 +1,8 @@
 from collections import namedtuple
 from ..utils.Project import get_last_proj_rev, get_project_rev
+from ..utils.Project import get_last_journal_date, get_journal_date
+from pathlib import Path
+
 
 class PROJECT_STRUCTURES:
     # name path rev
@@ -8,6 +11,17 @@ class PROJECT_STRUCTURES:
     RFI = ('RFI', 'rfi ans')
     RFI_STRUCT = ('RFI_STRUCT', 'data path')
     ANS_STRUCT = ('ANS_STRUCT', 'data path')
+    NPD = ('NPD', 'name path date')
+    SCAN = ('SCAN', 'name path type ext date')
+    ZIPSCAN = ('ZIPSCAN', 'name path data type ext date')
+    DATE = ('DATE', 'c m a')
+    ICJDATA = ('ICJDATA', 'date obj cert qa qp')
+    ICJDATASTRUCT = ('ICJDATASTRUCT', 'book sheet data')
+    DS = ('DS', 'name data')
+
+
+def get_structure(struct, data):
+    return namedtuple(*struct)._make(data)
 
 
 def create_new_structure(name, fields):
@@ -32,7 +46,18 @@ def get_projects_structure(projects_list, projects_paths):
         for path in projects_paths:
             if project.lower() in path.lower():
                 ProjectsStructure.append(
-                    DataStructure._make((project, path, get_project_rev(project.lower(), path.lower()))))
+                    DataStructure._make((project, Path(path), get_project_rev(project.lower(), path.lower()))))
+    return ProjectsStructure
+
+
+def get_journals_structure(projects_list, projects_paths):
+    DataStructure = namedtuple(*PROJECT_STRUCTURES.NPD)
+    ProjectsStructure = []
+    for project in projects_list:
+        for path in projects_paths:
+            if project.lower() in path.lower():
+                ProjectsStructure.append(
+                    DataStructure._make((project, Path(path), get_journal_date(path.lower()))))
     return ProjectsStructure
 
 
@@ -41,6 +66,16 @@ def get_last_projects_structure(projects_list, projects_structure):
     for project in projects_list:
         for data_structure in projects_structure:
             if project == data_structure.name and get_last_proj_rev(project, projects_structure) == data_structure.rev:
+                if data_structure not in buffer:
+                    buffer.append(data_structure)
+    return buffer
+
+
+def get_last_journals_structure(projects_list, projects_structure):
+    buffer = []
+    for project in projects_list:
+        for data_structure in projects_structure:
+            if project == data_structure.name and get_last_journal_date(project, projects_structure) == data_structure.date:
                 if data_structure not in buffer:
                     buffer.append(data_structure)
     return buffer
@@ -112,9 +147,25 @@ def find_str_in_list(string, lst):
     return sum(out)
 
 
+def get_finding_list(string, lst):
+    out = []
+    for l in lst:
+        if string.lower() in l.lower():
+            out.append(l)
+    return out
+
+
 def find_list_in_list(lst1, lst2):
     out = []
     LIL = create_new_structure('LIL', 'field data')
     for l1 in lst1:
         out.append(LIL._make((l1, find_str_in_list(l1, lst2))))
+    return out
+
+
+def get_findings_lists(lst1, lst2):
+    out = []
+    LIL = create_new_structure('LIL', 'field data')
+    for l1 in lst1:
+        out.append(LIL._make((l1, get_finding_list(l1, lst2))))
     return out

@@ -3,6 +3,7 @@ from ..gui.UtilsGUI import tk_gui
 from ..utils.Utils import combine_data
 from ..utils.Structures import create_new_structure, PROJECT_STRUCTURES
 
+
 # v 0.1
 def find_in_db(data: list = None, db: Scanner = None):
     if data is None:
@@ -13,6 +14,7 @@ def find_in_db(data: list = None, db: Scanner = None):
     data_dict = dict([(i, None) for i in data])
     combine_data(db, data_dict)
     return data_dict
+
 
 # v 0.2.5
 def check_rfi(rfi_list, rfi_db=None, answers_db=None):

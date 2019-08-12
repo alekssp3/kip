@@ -1,4 +1,4 @@
-from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
+from PyPDF4 import PdfFileWriter, PdfFileReader, PdfFileMerger
 from ..Utils import get_files_descriptors, close_file_descriptors
 
 

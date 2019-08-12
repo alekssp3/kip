@@ -1,9 +1,9 @@
-from .Errors import WrongTypeError
+from .Errors import WrongTypeError, NotAFileError
+from pathlib import Path
 
 
 def save(what=None, filename=None):
     """
-
     :param filename:
     :type what: list
     """
@@ -16,10 +16,14 @@ def save(what=None, filename=None):
             f.write(str(i) + '\n')
 
 
-def load(filename='', mode='text'):
-    if filename == "":
-        filename = input('Input file name: ')
+def load(filename, mode='text'):
+    file = Path(filename)
+    if not file.exists():
+        raise FileNotFoundError
+    if not file.is_file():
+        raise NotAFileError
     with open(filename, 'r', encoding='utf-8') as f:
+    # with open(filename, 'r') as f:
         if mode == 'raw':
             data = f.read()
         else:

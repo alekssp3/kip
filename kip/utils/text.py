@@ -27,4 +27,11 @@ def charsAt(chars, text):
         out.append(charAt(chars[i], text, max_out))
     return out
 
-    
+
+def isAllNumber(text):
+    for ch in text:
+        if ch in string.digits + '. ':
+            pass
+        else:
+            return False
+    return True

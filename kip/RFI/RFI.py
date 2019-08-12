@@ -7,7 +7,6 @@ from ..utils.pdf.pdf import pdf_merge
 from ..utils.data import save
 from ..gui.UtilsGUI import tk_gui
 import os
-from ..Scanner import Scanner
 from ..utils.Utils import combine_folder
 from ..utils.Question import Question
 
@@ -19,6 +18,7 @@ from ..utils.Question import Question
 #     def update(self, DB, path_list=None):
 #         for p in path_list:
 #             DB.update(p)
+
 
 # v 0.2.5
 def check_rfi(rfi_list, rfi_db=None, answers_db=None):
@@ -47,7 +47,7 @@ def check_and_merge(out_file, rfi_list=None, rfi_db=None, answers_db=None, open_
         if q.check(q.view('Open file in editor', Question.YES_NO)):
             os.startfile(os.path.abspath(out_file))
     else:
-        os.startfile(os.path.abspath(out_file))    
+        os.startfile(os.path.abspath(out_file))
 
 
 def check_and_combine(rfi_list=None, folder=None, rfi_db=None, answers_db=None, excludes=None, exactly=None):

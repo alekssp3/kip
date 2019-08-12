@@ -3,18 +3,32 @@ import os
 import re
 import shutil
 import string
-import zipfile
-import datetime
-from collections import namedtuple
 from ..gui.UtilsGUI import tk_gui
-from .Config import Config
+from pathlib import Path
 
+
+def get_number(text):
+    return int(text) if float(text) == int(text) else float(text) 
 
 def sum_from_text(text, separator=' '):
-    l = text.split(separator)
+    _input = text.split(separator)
     if '.' in text or ',' in text:
-        return sum([float(i) for i in l if i != ''])
-    return sum([int(i) for i in l if i != ''])
+        return sum([float(i) for i in _input if i != ''])
+    return sum([int(i) for i in _input if i != ''])
+
+
+def get_type_from_text(text):
+    words = re.findall(r'\s', text)
+    print(f'Data len = {len(words)}')
+
+
+def get_data_type(data):
+    if len(data) < 1:
+        pass
+    if len(data) == 1:
+        pass
+    else:
+        pass
 
 
 def __get_var_name(var):
@@ -102,16 +116,6 @@ def close_file_descriptors(file_descriptors):
             print('Cant close file')
 
 
-# def merge(self):
-#     check_and_merge(self.filename.get(), self.get_lines_from_text(), open_on_done=self.open_doc.state)
-
-
-# def check_and_combine_2(data_list, folder, database):
-#     data = check_data(data_list, database)
-#     combine_folder(data[0].values(), folder)
-#     return data
-
-
 def str_sum(string, splitter=' '):
     if '.' in string:
         return sum([float(i) for i in re.split(splitter, string)])
@@ -183,3 +187,40 @@ def str_ext(string, splitter=r'\s', length=3, fill='0'):
 def reproduce(template, extended, length=3, fill='0'):
     for i in str_ext(extended, length=length, fill=fill):
         print(template.format(i).upper())
+
+
+def pl(lst):
+    '''Print list'''
+    for i in lst:
+        print(i)
+
+
+def pne(lst, message, view=False):
+    '''Print if not empty'''
+    if len(lst) > 0:
+        print(message)
+        if view:
+            pl(lst)
+
+
+def closeDescriptors(desks):
+    for d in desks:
+        d.close()
+
+
+def getDescriptors(files_list, mode='rb'):
+    return [open(file, mode) for file in files_list]
+
+
+def getDescriptor(file, mode='rb'):
+    return open(file, mode)
+
+
+def getFiles(path):
+    dir_path = Path(path)
+    all_files = list(dir_path.iterdir())
+    return all_files
+
+
+def hashOfBools(bools):
+    return sum([j*2**i for i, j in enumerate(list(map(int, bools)))])

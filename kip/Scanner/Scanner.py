@@ -1,9 +1,12 @@
 import os
 import re
 from datetime import time
-
 from ..utils.zip.zip import unzip
 from ..utils.data import save, load
+from ..utils.Utils import pne
+from pathlib import Path
+from ..utils.Structures import PROJECT_STRUCTURES, get_structure_from_dict, create_new_structure
+from collections import namedtuple
 
 
 def load_db(db_name, temp_folder='.', remove_after=True):
@@ -28,28 +31,38 @@ def save_db(db_name, temp_folder='.'):
     pass
 
 
+def loadOrCreateScanner(db_file, scanning_path, autosave=True):
+    scanner = Scanner()
+    if db_file.exists():
+        scanner.load(db_file)
+    else:
+        scanner.scan(scanning_path)
+        if autosave:
+            scanner.save(db_file)
+    return scanner
+
+
 class Scanner:
-    def __init__(self, path=None, dirs=None, files=None):
-        self.path = path or os.path.abspath(os.getcwd())
-        self.dirs = dirs or []
-        self.files = files or []
-        self.errors = []
+    def __init__(self, *args, **kwargs):
+        self.path = os.path.abspath(os.getcwd())
+        self.dirs = []
+        self.files = []
         self.verbose = False
         self.queryes = []
+        self.errors = []
         self.warnings = []
+        # self.load_settings()
+        self.__dict__.update(kwargs)
+
+    def init(self, param=None):
+        if param is None:
+            pass
 
     def info(self):
+        '''Print information about scanner state'''
         print(f'Now {len(self.files)} files in database')
-        if len(self.warnings) > 0:
-            print(f'Warnings {len(self.warnings)}')
-            if self.verbose:
-                for i in self.warnings:
-                    print(i)
-        if len(self.errors) > 0:
-            print(f'Errors {len(self.errors)}')
-            if self.verbose:
-                for i in self.errors:
-                    print(i)
+        pne(self.warnings, f'Warnings {len(self.warnings)}', self.verbose)
+        pne(self.errors, f'Errors {len(self.errors)}', self.verbose)
 
     def __len__(self):
         return len(self.files)
@@ -101,9 +114,9 @@ class Scanner:
                 out.append(i)
         return out
 
-    def scan(self, path=None, update_query=True):
-        self.path = path or self.path
-        if isinstance(path, (str)):
+    def scan(self, path:str = None, update_query=True):
+        self.path = str(path) or self.path
+        if isinstance(path, (str, Path)):
             self.scan_folder(update_query)
         else:
             try:
@@ -131,7 +144,7 @@ class Scanner:
         buffer += self.files
         save(buffer, db_name)
 
-    def load(self, db_name):
+    def load(self, db_name:str):
         # TODO: read and write as bites
         # TODO: add hash
         buffer = load(db_name)
@@ -143,6 +156,21 @@ class Scanner:
             print('Data status: OK')
         self.queryes = querry
         self.files = data
+
+    def get_struct(self):
+        out = []
+        for i in self.files:
+            p = Path(i)
+            d = {'name':p.name, \
+                'path':p.absolute(), \
+                'type': 'd' if p.is_dir() else 'f', \
+                'ext': p.suffix,\
+                'date': namedtuple(*PROJECT_STRUCTURES.DATE)._make([p.stat().st_ctime, \
+                    p.stat().st_mtime, \
+                    p.stat().st_atime])}
+            out.append(namedtuple(*PROJECT_STRUCTURES.SCAN)._make(d.values()))
+        return out
+
 
     def clean(self):
         self.errors = []
