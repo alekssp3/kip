@@ -71,7 +71,8 @@ def timesheetsum(filename):
     ws = wb.sheetnames
     out = []
     for sh in ws[1:]:
-        s = sum([sh['b'+ str(j)].value for j in range(4, 10) if sh['b'+ str(j)].value is not None])
+        _sh = wb.get_sheet_by_name(sh)
+        s = sum([_sh['h'+ str(j)].value for j in range(9, 48) if _sh['h'+ str(j)].value is not None])
         out.append(f'{sh}\t{s}')
     return out
 
