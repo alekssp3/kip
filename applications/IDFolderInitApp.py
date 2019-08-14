@@ -16,20 +16,26 @@ from kip.utils.Structures import get_journals_structure, get_last_journals_struc
 from kip.utils.Errors import StructFieldError
 
 
-app_path = Path()
-print(f'app path: {app_path}')
-print(f'os getcwd: {os.getcwd()}')
-print(f'sys path: {sys.path}')
+app_path = Path(__file__).parent
+# print(f'app path: {app_path}')
+# print(f'os getcwd: {os.getcwd()}')
+# print(f'sys path: {sys.path}')
 
 
-config = Config(path=app_path.joinpath('IDFolderInit.conf'))
-path_to_save_id = Path(config.ID_SAVE_PATH)
-path_to_find_projects = Path(config.PROJECTS_FINDING_PATH)
-path_to_find_journals = Path(config.JOURNALS_FINDING_PATH)
-path_to_current_ids = Path(config.CURRENT_IDS_FILE_PATH)
-path_to_projects_db = Path(config.PROJECTS_DB_PATH)
-path_to_journals_db = Path(config.JOURNALS_DB_PATH)
-path_to_templates = Path(config.TEMPLATES_PATH)
+def make_absolute(path):
+    if not Path(path).is_absolute():
+        return app_path.joinpath(path)
+    return Path(path)
+
+
+config = Config(path=make_absolute('IDFolderInit.conf'))
+path_to_save_id = make_absolute(config.ID_SAVE_PATH)
+path_to_find_projects = make_absolute(config.PROJECTS_FINDING_PATH)
+path_to_find_journals = make_absolute(config.JOURNALS_FINDING_PATH)
+path_to_current_ids = make_absolute(config.CURRENT_IDS_FILE_PATH)
+path_to_projects_db = make_absolute(config.PROJECTS_DB_PATH)
+path_to_journals_db = make_absolute(config.JOURNALS_DB_PATH)
+path_to_templates = make_absolute(config.TEMPLATES_PATH)
 projects = loadOrCreateScanner(path_to_projects_db, path_to_find_projects)
 journals = loadOrCreateScanner(path_to_journals_db, path_to_find_journals)
 current_ids = load(path_to_current_ids)
