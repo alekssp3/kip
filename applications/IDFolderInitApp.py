@@ -62,13 +62,19 @@ def get_struct_by_field(struct, field:str, condition:str):
 
 def init_id_kit(proj_struct, jrn_struct, path:Path):
     for ids in current_ids:
+        ids = [i.strip() for i in ids.split()]
+        compl = '001'
+        if len(ids) == 2:
+            ids, compl = ids
+        else:
+            ids = ids[0]
         try:
             ps = get_struct_by_field(proj_struct, 'name', ids)
             js = get_struct_by_field(jrn_struct, 'name', ids)
             cur_path = path.joinpath('_'.join([ids, str(ps.rev)]))
             # print(f'cur_path: {cur_path}')
             cur_path.mkdir()
-            cur_sub_path = cur_path.joinpath('-'.join([ids, '001']))
+            cur_sub_path = cur_path.joinpath('-'.join([ids, compl]))
             # print(f'cur_sub_path: {cur_sub_path}')
             cur_sub_path.mkdir()
             cur_proj_path = cur_path.joinpath('projects')
@@ -79,13 +85,13 @@ def init_id_kit(proj_struct, jrn_struct, path:Path):
             shutil.copy(js.path, cur_sub_path.joinpath(' '.join(['ЖВК', ids]) + js.path.suffix))
             for t in path_to_templates.iterdir():
                 if '.xlsm' in str(t):
-                    shutil.copy(str(t), cur_sub_path.joinpath('-'.join([ids, '001']) + '.xlsm'))
+                    shutil.copy(str(t), cur_sub_path.joinpath('-'.join([ids, compl]) + '.xlsm'))
                 else:
                     shutil.copy(str(t), cur_sub_path)
 
 
-        except Exception:
-            print(f'Problem with project {ids}')
+        except Exception as err:
+            print(f'Problem with project {ids}\n{err}')
         
 
 def debug():
@@ -101,18 +107,19 @@ def debug():
     # all_journals = get_findings_lists(current_ids, journals)
     print('Projects')
     print(f'Len current projects: {len(current_ids)}')
-    ps = get_projects_structure(current_ids, projects)
+    _current_ids = [i.split()[0] for i in current_ids]
+    ps = get_projects_structure(_current_ids, projects)
     print(f'Len ps: {len(ps)}')
     filtered_ps = [i for i in ps if 'pdf' in i.path.suffix]
     print(f'Len filtered_ps: {len(filtered_ps)}')
-    lps = get_last_projects_structure(current_ids, filtered_ps)
+    lps = get_last_projects_structure(_current_ids, filtered_ps)
     print(f'Len lps: {len(lps)}')
     # pl(lps)
     print('Journals')
-    js = get_journals_structure(current_ids, journals)
+    js = get_journals_structure(_current_ids, journals)
     # filtered_js = [i for i in js if '.xlsx' in i.path]
     print(f'Len js: {len(js)}')
-    ljs = get_last_journals_structure(current_ids, js)
+    ljs = get_last_journals_structure(_current_ids, js)
     print(f'Len jps: {len(ljs)}')
     # pl(ljs)
 
