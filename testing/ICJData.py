@@ -65,9 +65,9 @@ def getDate(text, icjdatastruct):
 def injectICJData(data):
     book = xlwings.books.active
     name = book.name.split('.')[0]
-    xlwings.books.active.sheets['Для ТСН'].select()
-    xlwings.books.active.sheets['Для ТСН'].range('a5').select()
-    xlwings.books.active.selection.value = getData(name, data)
+    # xlwings.books.active.sheets['Для ТСН'].select()
+    # xlwings.books.active.sheets['Для ТСН'].range('a5').select()
+    # xlwings.books.active.selection.value = getData(name, data)
     xlwings.books.active.sheets['DB'].select()
     xlwings.books.active.sheets['DB'].range('b3').select()
     xlwings.books.active.selection.value = getDate(name, data)

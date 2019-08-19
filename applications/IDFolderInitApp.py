@@ -18,9 +18,7 @@ from kip.core.utils import make_absolute
 
 
 app_path = Path(__file__).parent
-# print(f'app path: {app_path}')
-# print(f'os getcwd: {os.getcwd()}')
-# print(f'sys path: {sys.path}')
+
 
 config = Config(path=make_absolute(app_path, 'IDFolderInit.conf'))
 path_to_save_id = make_absolute(app_path, config.ID_SAVE_PATH)
@@ -103,7 +101,7 @@ def init_id_kit(proj_struct, jrn_struct, path:Path):
             print(f'Problem with project {ids}\n{err}')
         
 
-def debug():
+def main():
     # for file in path_to_find_projects.iterdir():
     #     print(file)
     # print(path_to_find_projects)
@@ -135,7 +133,10 @@ def debug():
     # print('get_param_by_field')
     # print(get_param_by_field(lps, 'nam', current_ids[0], 'rev'))
     init_id_kit(lps, ljs, path_to_save_id)
-debug()
+
+
+if __name__ == '__main__':
+    main()
 
 # TODO
 # get last rev for journals
