@@ -19,8 +19,10 @@ def save(what=None, filename=None):
 def load(filename, mode='text'):
     file = Path(filename)
     if not file.exists():
+        print(f'File {file} not found')
         raise FileNotFoundError
     if not file.is_file():
+        print(f'{file} is not file')
         raise NotAFileError
     with open(filename, 'r', encoding='utf-8') as f:
     # with open(filename, 'r') as f:
