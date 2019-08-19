@@ -81,13 +81,28 @@ def init_id_kit(proj_struct, jrn_struct, path:Path):
             # print(f'cur_proj_path: {cur_proj_path}')
             # print(js)
             cur_proj_path.mkdir()
-            shutil.copy(ps.path, cur_proj_path)
-            shutil.copy(js.path, cur_sub_path.joinpath(' '.join(['ЖВК', ids]) + js.path.suffix))
+            try:
+                shutil.copy(ps.path, cur_proj_path)
+            except Exception as exc:
+                print(f'Cant copy project. Try update database.\nJust delete {path_to_projects_db}.')
+                print(exc)
+            try:
+                shutil.copy(js.path, cur_sub_path.joinpath(' '.join(['ЖВК', ids]) + js.path.suffix))
+            except Exception as exc:
+                print(f'Cant copy jouranl. Add new journals to {path_to_find_journals}')
+                print(f'Then delete {path_to_journals_db}')
+                print(exc)
             for t in path_to_templates.iterdir():
-                if '.xlsm' in str(t):
-                    shutil.copy(str(t), cur_sub_path.joinpath('-'.join([ids, compl]) + '.xlsm'))
-                else:
-                    shutil.copy(str(t), cur_sub_path)
+                # except temporary excel files
+                if '~' not in str(t):
+                    try:
+                        if '.xlsm' in str(t):
+                            shutil.copy(str(t), cur_sub_path.joinpath('-'.join([ids, compl]) + '.xlsm'))
+                        else:
+                            shutil.copy(str(t), cur_sub_path)
+                    except Exception as exc:
+                        print(f'Cant copy project utils.')
+                        print(exc)
 
 
         except Exception as err:
