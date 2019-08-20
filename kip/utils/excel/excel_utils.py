@@ -2,6 +2,7 @@ from ..Structures import PROJECT_STRUCTURES
 from collections import namedtuple
 import xlrd
 import pyxlsb
+from testing.excelb2x import get_data_from_xlsb, write_data_to_xlsx
 
 def get_data_from_icj(sheet, start_row=3):
     out = []
@@ -24,10 +25,11 @@ def get_needed_sheet(workbook):
     for sheet in workbook.sheets():
         # print(sheet.name)
         try:
-            if sheet.cell(0,0).value == 'Дата записи':
-                return sheet
+            if sheet.ncols * sheet.nrows > 0:
+                if sheet.cell(0,0).value == 'Дата записи':
+                    return sheet
         except:
-            print(f'Cant find needed sheet in {workbook.name}')
+            print(f'Cant find needed sheet in {workbook}')
             pass
 
 
@@ -39,8 +41,8 @@ def get_workbooks(path_list):
 
 
 def get_workbook(path):
-    # if path.suffix == '.xlsb':
-    #     return pyxlsb.open_workbook(path)
+    if path.suffix == '.xlsb':
+        return xlrd.open_workbook(write_data_to_xlsx(get_data_from_xlsb(path), path))
     return xlrd.open_workbook(path)
 
 

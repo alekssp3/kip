@@ -42,6 +42,13 @@ class Config:
         return key in self.__dict__.keys()
 
 
+    def isEmpty(self, key):
+        k = self.__dict__.get(key)
+        if k is None or str(k).strip() == '':
+            return True
+        return False
+
+
     def __getattribute__(self, name):
         atr = None
         try:

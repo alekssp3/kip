@@ -16,6 +16,13 @@ from testing import ICJData
 app_path = Path(__file__).parent
 
 
+def simple_normilize(lst:list):
+    out = []
+    for l in lst:
+        out.append(' '.join(l.split()))
+    return out
+
+
 def getDataDict(data):
     pattern = r'\d{5} *[eEеЕ]'
     regex = re.compile(pattern)
@@ -38,7 +45,7 @@ def getDataDict(data):
                     else:
                         out[proj_emid] = [[obj], [cert]]
     for d in out:
-        out[d] = [list(set(out[d][0])), list(set(out[d][1]))]
+        out[d] = [list(set(simple_normilize(out[d][0]))), list(set(simple_normilize(out[d][1])))]
     return out
 
 
@@ -56,6 +63,7 @@ def createDB(name, find_path=None, save_path=None):
         ws.cell(row+2, 2).value = obj
         cert = '\n'.join(_dict[d][1]).strip()
         ws.cell(row+2, 3).value = cert
+    ws.auto_filter.ref = 'A1:C'+str(row+1)
     wb.save(save_path.joinpath(name + '.xlsx'))
     wb.close()
 
