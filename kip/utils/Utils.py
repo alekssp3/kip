@@ -224,3 +224,7 @@ def getFiles(path):
 
 def hashOfBools(bools):
     return sum([j*2**i for i, j in enumerate(list(map(int, bools)))])
+
+
+def get_compiled_regex(pattern):
+    return re.compile(pattern)

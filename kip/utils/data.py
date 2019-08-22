@@ -17,6 +17,9 @@ def save(what=None, filename=None):
 
 
 def load(filename, mode='text'):
+    """
+    :param filename:
+    """
     file = Path(filename)
     if not file.exists():
         print(f'File {file} not found')
