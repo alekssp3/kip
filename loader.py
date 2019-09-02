@@ -4,6 +4,7 @@
 from kip.utils.Utils import sum_from_text, start, create_dir
 from kip.Scanner.Scanner import Scanner, load_db
 from kip.utils.excel.Excel import timesheetsum, ICJ, check_and_close, zbs, autonum_on_place, numerator3  # swap_selected_columns/
+from kip.utils.excel.Excel import timesheetsum_by_post
 # from kip.utils.excel.Excel import getICJDatas
 from kip.utils.data import save, load
 from kip.utils.Splitter import Splitter

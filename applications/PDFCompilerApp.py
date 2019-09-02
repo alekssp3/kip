@@ -1,7 +1,14 @@
 import os
 import sys
 import time
+from pathlib import Path
 from kip.utils.pdf.PDFCompiler import PDFCompiler
+# from kip.utils.Config import Config
+# from kip.core.utils import make_absolute
+
+
+# app_path = Path(__file__).parent
+
 
 def main():
     auto_close = False

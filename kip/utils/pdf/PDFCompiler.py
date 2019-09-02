@@ -12,13 +12,12 @@ from ..Errors import NotAFileError, WrongConfigurationFile, WriteFileError
 class PDFCompiler(DefaultParams):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        sd = self.default
-        sd('path', '.', Path)
-        sd('config_name','id.conf')
-        config_path = sd('path').joinpath(sd('config_name'))
-        sd('config_path', config_path)
+        self.default('path', '.', Path)
+        self.default('config_name','id.conf')
+        config_path = self.default('path').joinpath(self.default('config_name'))
+        self.default('config_path', config_path)
         try:
-            self.config = Config(sd('config_path'))
+            self.config = Config(self.default('config_path'))
         except WrongConfigurationFile:
             pass
         except NotAFileError:
