@@ -77,17 +77,18 @@ def timesheetsum(filename):
     return out
 
 
-def timesheetsum_by_post(filename):
+def timesheetsum_by_post(filename, **kwargs):
     "Подсчет человекочасов в книге по форме RHI по должности"
     wb = openpyxl.load_workbook(filename)
     ws = wb.sheetnames
     out = []
-    pattern = '\s\(.*\)'
+    pattern = '\s*\(.*\)'
     regex = re.compile(pattern)
     for sh in ws:
         _sh = wb.get_sheet_by_name(sh)
-        for line in range(9, 49):
-            post = _sh['f' + str(line)].value
+        for line in range(9, 60):
+            post = str(_sh['f' + str(line)].value).lower().strip()
+            post = post[0].upper() + post[1:].replace(' ', '')
             work_time = _sh['h'+ str(line)].value
             try:
                 normal_sheet_name = sh.replace(regex.findall(sh)[0], '')
