@@ -11,6 +11,7 @@ from ..Structures import PROJECT_STRUCTURES, get_structure
 from ..Utils import pne
 # from collections import namedtuple
 
+
 class WrongFileFormat(Exception):
     pass
 
