@@ -1,45 +1,11 @@
 import os
 import re
 from datetime import time
-from ..utils.zip.zip import unzip
 from ..utils.data import save, load
 from ..utils.Utils import pne
 from pathlib import Path
 from ..utils.Structures import PROJECT_STRUCTURES, get_structure_from_dict, create_new_structure
 from collections import namedtuple
-
-
-def load_db(db_name, temp_folder='.', remove_after=True):
-    s = Scanner()
-    db_uncompresed = os.path.abspath(db_name.replace('.dbz', '.dbraw'))
-    print(db_uncompresed)
-    if db_name.endswith('.dbz'):
-        print(db_name)
-        print(os.path.dirname(db_name))
-        print(os.path.abspath(os.path.dirname(db_name)))
-
-        unzip(db_name, os.path.dirname(db_name))
-        s.load(db_uncompresed)
-        if remove_after:
-            os.remove(db_uncompresed)
-    else:
-        s.load(db_name)
-    return s
-
-
-def save_db(db_name, temp_folder='.'):
-    pass
-
-
-def loadOrCreateScanner(db_file, scanning_path, autosave=True):
-    scanner = Scanner()
-    if db_file.exists():
-        scanner.load(db_file)
-    else:
-        scanner.scan(scanning_path)
-        if autosave:
-            scanner.save(db_file)
-    return scanner
 
 
 class Scanner:
@@ -51,7 +17,6 @@ class Scanner:
         self.queryes = []
         self.errors = []
         self.warnings = []
-        # self.load_settings()
         self.__dict__.update(kwargs)
 
     def init(self, param=None):
@@ -170,7 +135,6 @@ class Scanner:
                     p.stat().st_atime])}
             out.append(namedtuple(*PROJECT_STRUCTURES.SCAN)._make(d.values()))
         return out
-
 
     def clean(self):
         self.errors = []

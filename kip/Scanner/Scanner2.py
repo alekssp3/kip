@@ -6,11 +6,9 @@ class Scanner(DefaultParams):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.default('path', '.', Path)
-        # self.default('recursive', 0)
         self.files = []
         self.dirs = []
         self.others = []
-        # self.__recursive = 0
         self.__dirs = set()
 
     # @update_kwargs default('path', self.default('path'))
