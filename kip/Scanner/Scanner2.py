@@ -16,7 +16,7 @@ class Scanner(DefaultParams):
         if 'path' in kwargs:
             path = Path(kwargs['path'])
         else:
-            path = Path(self.default('path'))
+            path = Path(args[0])
         self.scan_folder(path=path)
         while len(self.dirs) > 0:
             self.scan_folder(path=self.dirs.pop(0))
