@@ -1,3 +1,4 @@
+import re
 from kip.core.ClassConstructor import DefaultParams
 
 class BaseFinder(DefaultParams):
@@ -5,12 +6,18 @@ class BaseFinder(DefaultParams):
         super().__init__(*args, **kwargs)
 
     def find(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         out = []
-        what = args[0]
+        pattern = args[0]
+        regexp = re.compile(pattern)
         for obj in self.default('where'):
-            if what in obj.self.default('field'):
+            finding = str(obj.__getattribute__(self.default('field')))
+            if len(regexp.findall(finding)) > 0:
                 out.append(obj)
-        return out
+        return BaseFinder(where=out)
+
+    def out(self):
+        return self.default('where')
 
     def set_where(self, where):
         self.default('where', where)
