@@ -8,30 +8,27 @@ class Scanner(BaseScanner):
         self.default('path', '.', Path)
 
     def scan(self, path='.', *args, **kwargs):
-        self._scan_folder(Path(path))
+        self._scan_folder_logic(path)
         self._file_scaning_logic()
 
-    def _scan_folder(self, path:Path, *args, **kwargs):
+    def _scan_folder_logic(self, path, *args, **kwargs):
         try:
-            for file in path.iterdir():
-                self._file_sorting_logic(file)            
+            for file in Path(path).iterdir():
+                self._file_sorting_logic(file)
         except:
             self._file_errors_logic(path)
 
     def _file_sorting_logic(self, file):
         if file.is_dir():
-                # if file not in self.__dirs:
-                #     self.__dirs.add(file.absolute())
-                #     self.dirs.append(file.absolute())
             self.dirs.append(file.absolute())
         elif file.is_file():
-            self.files.append(file.absolute())
+            self.files.append(str(file.absolute()))
         else:
             self.others.append(file.absolute())
 
     def _file_scaning_logic(self):
         while len(self.dirs) > 0:
-            self._scan_folder(Path(self.dirs.pop(0)))
+            self._scan_folder_logic(Path(self.dirs.pop(0)))
 
     def _file_errors_logic(self, path):
         self.errors.append(path.absolute())

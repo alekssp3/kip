@@ -11,7 +11,7 @@ class BaseFinder(DefaultParams):
         pattern = args[0]
         regexp = re.compile(pattern)
         for obj in self.default('where'):
-            finding = str(obj.__getattribute__(self.default('field')))
+            finding = self.__get_or_call__(obj)
             if len(regexp.findall(finding)) > 0:
                 out.append(obj)
         return BaseFinder(where=out)
@@ -19,8 +19,19 @@ class BaseFinder(DefaultParams):
     def out(self):
         return self.default('where')
 
-    def set_where(self, where):
-        self.default('where', where)
+    def set(self, *args, **kwargs):
+        if len(args) > 0:
+            where = args[0]
+            args = args[1:]
+            kwargs['where'] = where
+        if len(args) > 0:
+            field = args[0]
+            args = args[1:]
+            kwargs['field'] = field
+        super().__init__(*args, **kwargs)
 
-    def set_field(self, field):
-        self.default('field', field)
+    def __get_or_call__(self, obj):
+        obj = obj.__getattribute__(self.default('field'))
+        if '__call__' in dir(obj):
+            return str(obj())
+        return str(obj)
