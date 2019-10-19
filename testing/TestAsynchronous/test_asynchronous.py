@@ -3,12 +3,14 @@ import re
 import requests
 from multiprocessing import Process
 
-url='https://en.wikipedia.org/wiki/Main_Page'
+
+url = 'https://en.wikipedia.org/wiki/Main_Page'
 links_to_prepare = []
 links_to_work = []
 links_all_done = []
 links_buffer = set()
 errors = []
+
 
 def get_links_with_re(text):
     pattern = r'<a\s.*?href="(.+?)".*?>(.+?)</a>'
@@ -53,9 +55,10 @@ def worker():
             break
 
 
-def main():    
+def main():
     links_to_work.append((url, 1))
     worker()
+
 
 if __name__ == '__main__':
     main()
