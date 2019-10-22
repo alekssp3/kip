@@ -1,64 +1,56 @@
-from time import time
 import re
 import requests
-from multiprocessing import Process
+from datetime import datetime
+
+URL = 'https://en.wikipedia.org/wiki/Main_Page'
+TASKS = []
+RESULT = []
 
 
-url = 'https://en.wikipedia.org/wiki/Main_Page'
-links_to_prepare = []
-links_to_work = []
-links_all_done = []
-links_buffer = set()
-errors = []
-
-
-def get_links_with_re(text):
-    pattern = r'<a\s.*?href="(.+?)".*?>(.+?)</a>'
-    regexp = re.compile(pattern)
-    return [i[0] for i in regexp.findall(text)]
-
-
-def get_normal_link(link):
-    if link.startswith('http'):
-        return link
-    elif link.startswith('//'):
-        return links_all_done[0].split('/')[0] + link
-    elif link.startswith('/'):
-        return '/'.join(links_all_done[0].split('/')[:3]) + link
-    else:
-        return links_all_done[0] + link
-
-
-def worker():
-    while True:
-        if links_to_work:
-            link, weidth = links_to_work.pop(0)
-            if link in links_buffer:
-                continue
-            elif weidth < 1:
-                links_all_done.append(link)
-                continue
+def grab_all_urls(url):
+    response = requests.get(url)
+    if response:
+        pattern = r'<a\s.*?href="(.+?)".*?>(.+?)</a>'
+        regexp = re.compile(pattern)
+        links = (i[0] for i in regexp.findall(response.text))
+        for link in links:
+            if link.startswith('#'):
+                out = url + link
+            elif link.startswith('//'):
+                out = url.split('/')[0] + link
+            elif link.startswith('/'):
+                out = '/'.join(url.split('/')[:3]) + link
             else:
-                links_buffer.add(link)
-                links_to_prepare.append(link)
-                response = requests.get(link)
-                # print('after response')
-                if response:
-                    # for l in get_links_with_re(response.text):
-                        # links_to_work.append((get_normal_link(l), weidth-1))
-                    links_to_work.extend([(get_normal_link(l), weidth-1) for l in get_links_with_re(response.text)])
-                    # print('after adding')
-                else:
-                    errors.append((link, weidth))
-        else:
-            print('All done.')
-            break
+                out = link
+            if out not in RESULT:
+                yield out
 
 
-def main():
-    links_to_work.append((url, 1))
-    worker()
+def event_loop():
+    while TASKS:
+        url, depth = TASKS.pop(0)
+        if url not in RESULT:
+            RESULT.append(url)
+        urls = grab_all_urls(url)
+        for cur_url in urls:
+            RESULT.append(cur_url)
+            if depth - 1 > 0:
+                TASKS.append((cur_url, depth - 1))
 
 
 if __name__ == '__main__':
-    main()
+    TASKS.append((URL, 1))
+    start = datetime.now()
+    event_loop()
+    print(f'Time: {datetime.now() - start}')
+    print(f'Len: {len(RESULT)}')
+
+
+# инициируем очередь чтения новой ссылкой и глубиной сканирования
+# пока в очереди есть ссылки
+#     вынуть ссылку из очереди
+#     отправить запрос 
+#     прочитать ответ
+#     распарсить ответу
+#     привести ссылки из ответа в нормальный вид
+#     поместить нормализованные ссылки в очередь
