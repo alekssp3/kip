@@ -1,6 +1,3 @@
-# it doesnt work
-
-
 import asyncio
 import requests
 
@@ -8,16 +5,21 @@ import requests
 urls = ['http://www.google.com', 'http://www.yandex.ru', 'http://www.python.org']
 
 
-async def call_url(url):
-    print('Starting {}'.format(url))
-    response = await requests.get(url)
-    data = await response.text()
-    print('{}: {} bytes: {}'.format(url, len(data), data))
-    return data
+async def call_url(urls):
+    while urls:
+        url = urls.pop(0)
+        print('Starting {}'.format(url))
+        response = requests.get(url)
+        data = response.text()
+        print('{}: {} bytes: {}'.format(url, len(data), data))
+        return data
 
 
-futures = [call_url(url) for url in urls]
+async def main():
+    task1 = asyncio.create_task(call_url(urls))
+
+    await asyncio.gather(task1)
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(asyncio.wait(futures))
+if __name__ == "__main__":
+    asyncio.run(main())

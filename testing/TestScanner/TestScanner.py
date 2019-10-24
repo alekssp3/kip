@@ -2,6 +2,7 @@ from pathlib import Path
 from testing.TestScanner.BaseScanner import BaseScanner
 from time import time
 
+
 class Scanner(BaseScanner):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
