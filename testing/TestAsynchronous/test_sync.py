@@ -1,8 +1,7 @@
-import asyncio
 import re
+import time
 import requests
-# from test_utils import timeit
-# from test_utils import RoundRobin
+from test_utils import timeit
 
 URL = 'https://en.wikipedia.org/wiki/Main_Page'
 TASKS = []
@@ -10,16 +9,12 @@ RESULT = set()
 RESPONSE = []
 
 
-async def set_to_tasks(*args):
-    TASKS.append(*args)
+def get_response(url):
+    return RESPONSE.append(requests.get(url))
 
 
-async def get_response(url):
-    RESPONSE.append(requests.get(url))
-
-
-async def get_url_text():
-    RESPONSE.pop(0).text
+def get_url_text():
+    yield RESPONSE.pop(0).text
 
 
 def grab_all_links(text):
@@ -59,9 +54,13 @@ def start():
                     TASKS.append((cur_url, depth - 1))
 
 
-async def main():
-    task1 = asyncio.create_task(set_to_tasks((URL, 1))
+@timeit
+def main():
+    TASKS.append((URL, 1))
+    while TASKS:
+        start()
+    print(f'Len: {len(RESULT)}')
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
