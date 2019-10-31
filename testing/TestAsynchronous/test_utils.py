@@ -6,7 +6,7 @@ def timeit(foo):
         start = time.monotonic()
         result = foo(*args, **kwargs)
         end = time.monotonic()
-        print(end * 1000 - start * 1000)
+        print('Execution time: {} ms'.format(int(end * 1000 - start * 1000)))
         return result
     return wrapper
 

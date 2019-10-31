@@ -3,6 +3,7 @@ import time
 import requests
 from test_utils import timeit
 
+
 URL = 'https://en.wikipedia.org/wiki/Main_Page'
 TASKS = []
 RESULT = set()
@@ -10,19 +11,18 @@ RESPONSE = []
 
 
 def get_response(url):
-    return RESPONSE.append(requests.get(url))
+    RESPONSE.append(requests.get(url))
 
 
 def get_url_text():
-    yield RESPONSE.pop(0).text
+    RESPONSE.pop(0).text
 
 
 def grab_all_links(text):
     pattern = r'<a\s.*?href="(.+?)".*?>(.+?)</a>'
     regexp = re.compile(pattern)
     links = (i[0] for i in regexp.findall(text))
-    for i in links:
-        yield i
+    return links
 
 
 def get_url_from_link(url, link):
@@ -52,6 +52,10 @@ def start():
                 RESULT.add(cur_url)
                 if depth - 1 > 0:
                     TASKS.append((cur_url, depth - 1))
+
+
+def async_start():
+    pass
 
 
 @timeit
