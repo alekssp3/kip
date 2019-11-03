@@ -72,12 +72,12 @@ def jobs_manager():
     if task.job == 'result':
         RESULTS.add(task.normalized)
         depth = task.depth - 1
-        create_task(task, job='request', depth=depth, url=task.normalized)
+        create_task(job='request', depth=depth, url=task.normalized)
 
 
 def main():
     start = time()
-    create_task(job='request', url='https://en.wikipedia.org/wiki/Main_Page', depth=1)
+    create_task(job='request', url='https://en.wikipedia.org/wiki/Main_Page', depth=2)
     while TASKS:
         jobs_manager()
     stop = time()
