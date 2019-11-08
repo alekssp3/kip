@@ -1,5 +1,6 @@
-import requests
-import asyncio
+# import requests
+from requests_html import AsyncHTMLSession
+# import asyncio
 from time import time
 
 
@@ -12,16 +13,28 @@ def load(filename=None):
             yield from file.readlines()
 
 
-async def ping(url):
+def ping_creator(session, url):
+    async def inner():
+        print(f'Work with {url}')
+        r = await session.get(url)
+        return r
+    return inner
+
+
+async def ping(session, url):
     # print(f'Work with {url}')
-    return requests.get(url)
+    r = await session.get(url)
+    return r
 
 
 def main():
-    loop = asyncio.get_event_loop()
-    tasks = [ping(i) for i in load(file)]
-    loop.run_until_complete(asyncio.wait(tasks))
-    loop.close()
+    # loop = asyncio.get_event_loop()
+    # tasks = [ping(i) for i in load(file)]
+    # loop.run_until_complete(asyncio.wait(tasks))
+    # loop.close()
+    session = AsyncHTMLSession()
+    tasks = [ping_creator(session, url) for url in load(file)]
+    session.run(*tasks)
 
 
 if __name__ == "__main__":
