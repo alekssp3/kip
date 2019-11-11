@@ -1,18 +1,10 @@
-# import requests
 from requests_html import AsyncHTMLSession
-# import asyncio
 from time import time
-import os
-import sys
-# sys.path.insert(0, os.path.abspath(os.getcwd()))
-# from grabber2 import create_file_from_list
-
-
-#file = 'file-1573211536.3653588.txt'
 
 file = 'width1.txt'
 
-RESULTS = []
+RESULTS = set()
+FILTER = ('jpeg', 'jpg', 'png', 'ogg', 'ogv', 'mp3', 'mp4', 'pdf')
 
 
 def create_file_from_list(data, filename=None):
@@ -24,36 +16,36 @@ def create_file_from_list(data, filename=None):
 
 def load(filename=None):
     if filename is not None:
-        with open(filename, 'r') as file:
+        with open(filename, 'r', encoding='utf-8') as file:
             yield from file.readlines()
 
 
 def ping_creator(session, url):
     async def inner():
         try:
-            print(f'Work with {url}')
+            # print(f'Work with {url}')
             r = await session.get(url)
             links = r.html.absolute_links
-            RESULTS.extend(links)
-            # print(len(links))
-        except:
+            RESULTS.update(links)
+        except Exception as e:
+            print(f'Faled with url {url}')
+            print(e)
             pass
     return inner
 
 
-async def ping(session, url):
-    # print(f'Work with {url}')
-    r = await session.get(url)
-    return r
+def filtered_url(url):
+    for f in FILTER:
+        if url.endswith('.' + f) or url.startswith('#'):
+            return False
+    return True
 
 
 def main():
-    # loop = asyncio.get_event_loop()
-    # tasks = [ping(i) for i in load(file)]
-    # loop.run_until_complete(asyncio.wait(tasks))
-    # loop.close()
     session = AsyncHTMLSession()
-    tasks = [ping_creator(session, url) for url in load(file)]
+    working_list = set([i for i in load(file)])
+    print(f'Len of working list {len(working_list)}')
+    tasks = [ping_creator(session, url) for url in working_list if filtered_url(url)]
     session.run(*tasks)
 
 

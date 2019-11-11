@@ -23,7 +23,7 @@ https://en.wikipedia.org/wiki/Talk:Main_Page
 https://en.wikipedia.org/wiki/File:Duane_Vermeulen_2012_Springboks.jpg
 https://en.wikipedia.org/wiki/Wikipedia:In_the_news/Candidates
 https://en.wikipedia.org/wiki/Free_content
-https://shop.wikimedia.org
+# https://shop.wikimedia.org
 https://en.wikipedia.org/wiki/Impeachment_inquiry_against_Donald_Trump
 https://cs.wikipedia.org/wiki/
 https://en.wikiquote.org/
