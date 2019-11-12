@@ -23,20 +23,20 @@ def load(filename=None):
 def ping_creator(session, url):
     async def inner():
         try:
-            # print(f'Work with {url}')
             r = await session.get(url)
             links = r.html.absolute_links
             RESULTS.update(links)
         except Exception as e:
             print(f'Faled with url {url}')
             print(e)
-            pass
     return inner
 
 
 def filtered_url(url):
+    if url.startswith('#'):
+        return False
     for f in FILTER:
-        if url.endswith('.' + f) or url.startswith('#'):
+        if url.endswith('.' + f):
             return False
     return True
 
@@ -46,6 +46,11 @@ def main():
     working_list = set([i for i in load(file)])
     print(f'Len of working list {len(working_list)}')
     tasks = [ping_creator(session, url) for url in working_list if filtered_url(url)]
+
+
+def main():
+    session = AsyncHTMLSession()
+    tasks = [ping_creator(session, url) for url in load(file)]
     session.run(*tasks)
 
 
